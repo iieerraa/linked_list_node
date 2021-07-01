@@ -1,152 +1,188 @@
 from typing import Optional
 
 
-class LinkedListNode:  # класс элементов списка
+class LinkedListNode:
+    """
+    Класс создания элементов
+    """
     def __init__(self, content, link_previous=None, link_next=None):
-        self.content = content  # содержимое элемента
-        self.link_previous = link_previous  # ссылка на предыдущий элемент
-        self.link_next = link_next  # ссылка на следуЮщий элемент
+        self.content = content  # задать содержимое элемента
+        self.link_previous = link_previous  # задать ссылка на предыдущий элемент
+        self.link_next = link_next  # задать ссылка на следующий элемент
 
 
-class LinkedList:  # класс списков
+class LinkedList:
+    """
+    Класс создания двунаправленого связного списка
+    """
     def __init__(self):
-        self.first_element: Optional[LinkedListNode] = None
-        self.last_element: Optional[LinkedListNode] = None
-        self.length: int = 0
+        """
+        Создание списка
+        При первой инициализации списка в нём нет элементов и его длина равна 0
+        """
+        self.first_element: Optional[LinkedListNode] = None  # задать первый элемент списка
+        self.last_element: Optional[LinkedListNode] = None  # задать последний элемент списка
+        self.length: int = 0  # задать длину списка
 
     def append(self, element: LinkedListNode):
         """
-        Dobavlenie elimenta v konec spiska
+        Добавление элемента в конец списка
+
+        :param element: принимает в качестве параметра элемент класса LinkedListNode для добавления
+        :return: в конец списка добавлен элемент и длина списка увеличена на 1
         """
-        if self.first_element is None:  # усли список пуст
-            self.first_element = element  # назначить элемент на первую позицию
-            self.last_element = element  # назначить элемент на последнюю позицию
+        if self.first_element is None:  # если список пуст
+            self.first_element = element  # назначить новый элемент на первую позицию списка
+            self.last_element = element  # назначить новый элемент на последнюю позицию списка
         else:
-            self.last_element.link_next = element  # ссылка на следующий элемент
-            element.link_previous = self.last_element  # ссылка на предыдущий элемент
-            self.last_element = element  # определение элемента на последнюю позицию
-        self.length += 1  # увеличение длины списка
+            self.last_element.link_next = element  # прилинковыть новый элемент в качесте следующего к последнему элементу списка
+            element.link_previous = self.last_element  # прилинковать последний элемент списка в качестве предыдущего к новому элементу
+            self.last_element = element  # назначить новый элемент на последнюю позицию списка
+        self.length += 1  # увеличить длину списка
 
     def prepend(self, element: LinkedListNode):
         """
-        Dobavlenie pervogo elementa
+        Добавление элемента в начало
+
+        :param element: принимает в качестве параметра элемент класса LinkedListNode для добавления
+        :return: в начало списка добавлен элемент и длина списка увеличена на 1
         """
         if self.first_element is None:  # если список пуст
-            self.first_element = element  # назначить элемент на первую позицию
-            self.last_element = element  # назначить элемент на последнюю позицию
+            self.first_element = element  # назначить новый элемент на первую позицию списка
+            self.last_element = element  # назначить новый элемент на последнюю позицию списка
         else:
-            self.first_element.link_previous = element  # ссылка на предыдущий элемент
-            element.link_next = self.first_element  # ссылка на следующтй элемент
-            self.first_element = element  # назначение первого элемента
-        self.length += 1  # увеличение длины списка
+            self.first_element.link_previous = element  # прилинковыть новый элемент в качесте предыдущего к первому элементу списка
+            element.link_next = self.first_element  # прилинковать первый элемент списка в качестве следующего к новому элементу
+            self.first_element = element  # назначить новый элемент на первую позицию списка
+        self.length += 1  # увеличить длину списка
 
-    def put(self, element, position):
+    def put(self, element: LinkedListNode, index: int):
         """
-        Dobavlenie na kakuju-to poziciju
+        Добавление элемента на позицию по индексу
+        Новый элемент встаёт на нужный индекс сдвигая к концу последующие элементы
+
+        :param element: принимает в качестве параметра элемент класса LinkedListNode для добавления
+        :param index: принимает в качестве параметра натуральное число
+        :return: на требуемую позицию добавлен элемент и длина списка увеличена на 1
         """
-        if position > self.length or self.length == 0:  # проверка наличия требуемой позиции
+        try:
+            index_element = self[index]  # вызов элемента из списка по требуемому индексу
+            previous_element = index_element.link_previous  # вызов предыдущего элемента
+            previous_element.link_next = element  # прилинковать новый элемент в качестве следующего к предыдущему элементу списка
+            index_element.link_previous = element  # прилинковать новый элемент в качестве предыдущего к элементу на требуемом индексе
+            element.link_previous = previous_element  # прилинковать предыдущий элемент списка в качестве предыдущего к новому элементу
+            element.link_next = index_element  # прилинковать элемент на требуемом индексе в качестве следующего к новому элементу
+            self.length += 1  # увеличение длины списка
+        except AttributeError:
             return None
 
-        position_element = self[position]  # получение элемента на требуемой позиции
-        previous_element = position_element.link_previous  # получение предыдущего элемента
-        previous_element.link_next = element  # ссылка на следующий элемент
-        position_element.link_previous = element  # ссылка на предыдущий элемент
-        element.link_previous = previous_element  # ссылка на предыдущий элемент
-        element.link_next = position_element  # ссылка на следующий элемент
-        self.length += 1  # увеличение длины списка
-
-    def replace(self, element, position):
+    def replace(self, element: LinkedListNode, index: int):
         """
         Замена элемента на требуемой позиции
+        Новый элемент встаёт на нужный индекс, заменяя имеющийся на заданной позиции элемент
+
+        :param element: принимает в качестве параметра элемент класса LinkedListNode для добавления
+        :param index: принимает в качестве параметра натуральное число
+        :return: на требуемую позицию установлен элемент
         """
-        if position > self.length or self.length == 0:  # проверка наличия требуемой позиции
+        try:
+            index_element = self[index]  # вызов элемента из списка по требуемому индексу
+            previous_element = index_element.link_previous  # вызов предыдущего элемента
+            next_element = index_element.link_next  # вызов следующего элемента
+            previous_element.link_next = element  # прилинковать новый элемент в качестве следующего к предыдущему элементу списка
+            next_element.link_prev = element  # прилинковать новый элемент в качестве предыдущего к следующему элементу списка
+            element.link_previous = previous_element  # прилинковать предыдущий элемент списка в качестве предыдущего к новому элементу
+            element.link_next = next_element  # прилинковать следующий элемент в качестве следующего к новому элементу списка
+        except AttributeError:
             return None
 
-        position_element = self[position]  # получение элемента на требуемой позиции
-        previous_element = position_element.link_previous  # получение предыдущего элемента
-        next_element = position_element.link_next  # получение следующего элемента
-        previous_element.link_next = element  # ссылка на следующий элемент
-        next_element.link_prev = element  # ссылка на предыдущий элемент
-        element.link_previous = previous_element  # ссылка на прудыдущий элемент
-        element.link_next = next_element  # ссылка на следующтй элемент
+    def remove(self, index: int):
+        """
+        Удаление элемента с требуемой позиции
 
-    def remove(self, position):
+        :param index: принимает в качестве параметра натуральное число
+        :return: удалён элемент с требуемой позиуии и длина списка уменьшена на 1
         """
-        Удаление элемента с позиции
-        """
-        if position > self.length or self.length == 0:  # проверка наличия требуемой позиции
+        try:
+            element = self.__getitem__(index)  # вызов элемента стребующегося индекса
+            previous_element = element.link_previous  # вызов предыдущего элемента
+            next_element = element.link_next  # вызов следующего элемента
+            previous_element.link_next = next_element  # прилинковать следующий элемент в качестве следующего к предыдущему элементу
+            next_element.link_previous = previous_element  # прилинковать предыдущий элемент в качестве предыдущего к следующему элементу
+            self.length -= 1  # уменьшить длину списка
+        except AttributeError:
             return None
-
-        element = self.__getitem__(position)  # получение элемента на требуемой позиции
-        previous_element = element.link_previous  # получение предыдущего элемента
-        next_element = element.link_next  # получение следующего элемента
-        previous_element.link_next = next_element  # ссылка на следующий элемент
-        next_element.link_previous = previous_element  # ссылка на поредыдущий элемент
-        self.length -= 1  # уменьшегние длины списка
 
     def pop_first(self):
         """
         Удаление первого элемента
+
+        :return: удалён элемент из начала списка и уменьшина длина списка на 1
         """
         if self.length == 0:  # проверка длины списка
             return
 
-        self.first_element = self.first_element.link_next  # назначение первого элемента
-        self.first_element.link_previous = None  # ссылка на предыдущий элемент
+        self.first_element = self.first_element.link_next  # назначение элемента, следующего за первым элементом, на первую позицию в списке
+        self.first_element.link_previous = None  # удаление у первого элемента списка ссылки на предыдущий элемент
         self.length -= 1  # уменьшение длины списка
 
     def pop(self):
         """
         Удаление последнего элемента
+
+        :return: удалён элемент из конца списка и уменьшина длина списка на 1
         """
         if self.length == 0:  # проверка длины списка
             return
 
-        self.last_element = self.last_element.link_previous  # назначение последнего элемента
-        self.last_element.link_next = None  # ссылка на последний элемент
+        self.last_element = self.last_element.link_previous  # назначение элемента, предшествующего последнему элементу, на последнюю позицию списка
+        self.last_element.link_next = None  # удаление у последнего элемента списка ссылки на следующий элемент
         self.length -= 1  # уменьшение длины списка
 
     def __iter__(self):
         """
         Итерация списка от первого элемента к последнему
         """
-        element = self.first_element  # получение элемента
-        while element is not None:  # если элемент существует
-            yield element  # вернуть элемент
-            element = element.link_next  # получение следующего элемента для итерации
+        element = self.first_element  # вызов первого элемента списка
+        while element is not None:  # выполнение цикла пока существует вызываемый элемент
+            yield element  # возвратить элемент
+            element = element.link_next  # вызвать следующий элемент
 
     def iter_backward(self):
         """
-        Итерация от последнего элемента к первому
+        Итерация списка от последнего элемента к первому
         """
-        element = self.last_element  # получение элемента
-        while element is not None:  # если элемент существует
-            yield element  # вернуть элемент
-            element = element.link_previous  # получение предыдущего элемента для итерации
+        element = self.last_element  # вызов последнего элемента списка
+        while element is not None:  # выполнение цикла пока существует вызываемый элемент
+            yield element  # возвратить элемент
+            element = element.link_previous  # вызвать предыдущий элемент
 
     def __str__(self):
         """
         Вывести начало и конец списка
-        :return:
         """
+        # вернуть строку с содержимым первого и последнего элемента списка
         return self.first_element.content + " " + self.last_element.content
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         """
         Поиск элемента по индексу
-        :param index:
-        :return:
+
+        :param index: принимает в качестве параметра натуральное число
+        :return: возвращает требуемый элемент по ндексу
         """
-        counter_index = 1  # счётчик количества элементов
-        element_in_index = self.first_element  # получение индексируемого элемента
-        if index > self.length or self.length == 0:  # проверка наличия требуемой позиции
+        try:
+            element_in_index = self.first_element  # получить первый элемент списка в качестве начального
+            counter_index = 0  # счётчик количества элементов
+
+            while counter_index != index:  # цикл выполняется пока счётчик не равен необходимому элементу
+                element_in_index = element_in_index.link_next  # получить следующий элемент
+                counter_index += 1  # увеличение счётчика
+            return element_in_index  # вернуть найденый элемент
+        except AttributeError:
             return None
 
-        while counter_index != index:  # пока счётчик не равен неоБходимому элементу
-            element_in_index = element_in_index.link_next  # получение следующего элемента
-            counter_index += 1  # увеличение счётчика
-        return element_in_index  # вернуть найденый элемент
-
+# что будет если менять местами уже имеющиеся в списке элементы или дублировать их?
 
 # element_1 = LinkedListNode('value 1')
 # element_2 = LinkedListNode('value 2')
@@ -155,6 +191,7 @@ class LinkedList:  # класс списков
 # element_5 = LinkedListNode('value 5')
 # element_6 = LinkedListNode('value 6')
 # element_7 = LinkedListNode('value 7')
+# element_0 = LinkedListNode('value 0')
 #
 # list_1 = LinkedList()
 # list_1.append(element_1)
@@ -162,30 +199,3 @@ class LinkedList:  # класс списков
 # list_1.append(element_3)
 # list_1.append(element_4)
 # list_1.append(element_5)
-#
-# print('вывод первого и последнего элементов списка')
-# print(list_1)  # вывод первого и последнего элементов списка
-
-# print('вывод обратной итерации списка')
-# for x in list_1.iter_backward():  # вывод итерации списка
-#     print(x.content)
-
-# print('вывод итерации списка')
-# for x in list_1:  # вывод итерации списка
-#     print(x.content)
-
-# print('вывод элемента по индексу')
-# print(list_1[6])  # вывод элемента по индексу
-# print(list_1[3].content)
-
-# print('put')
-# list_1.put(element_6, 3)
-# print('вывод первого и последнего элементов списка')
-# print(list_1)
-# print('вывод итерации списка')
-# for x in list_1:
-#     print(x)
-
-# создать итерацию списка по срезу с шагом
-# for x in list_1[1:3:-1]:
-#     print(x)
